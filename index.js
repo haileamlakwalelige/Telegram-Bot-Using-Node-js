@@ -1,41 +1,28 @@
-require('dotenv').config()
-const express = require('express')
-const axios = require('axios')
-const bodyParser = require('body-parser')
+const TelegramBot = require("node-telegram-bot-api");
+const axios = require("axios");
+const express = require("express");
 
-const { TOKEN, SERVER_URL } = process.env
-const TELEGRAM_API = `https://api.telegram.org/bot${TOKEN}`
-const URI = `/webhook/${TOKEN}`
-const WEBHOOK_URL = SERVER_URL + URI
-
-const app = express()
-app.use(bodyParser.json())
-
-const init = async () => {
-    const res = await axios.get(`${TELEGRAM_API}/setWebhook?url=${WEBHOOK_URL}`)
-    console.log(res.data)
-}
+const app = express();
+app.get("/",(req, res)=>{
+    res.send("Welcome to my bot");
+});
+const token ="6206093781:AAEqW8x8f61i-akNpFEgAjnNH-gLEupuYis";
+const bot = new TelegramBot(token, {polling:true});
 
 
-  
-app.post(URI, async (req, res) => {
-    console.log(req.body)
+console.log("Welcome  to Telegram Bot");
 
-    const chatId = req.body.message.chat.id
-    const text = req.body.message.text
+bot.on("message", async(msg)=>{
+    const chatId = msg.chat.id;
+    const first =msg.chat.first_name;
+    //  const last = msg.chat.last_name;
 
-    await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: chatId,
-        text: text
-    })
-    return res.send()
+
+        bot.sendMessage(chatId,`Hello ${first} ` );
+        bot.sendMessage(chatId, "Hello Welcome to my BOT");
+        bot.sendMessage(chatId,`This bot is for trail only so don't expect to match ${first}`);
 });
 
-
-
-app.listen(process.env.PORT || 5000, async () => {
-    console.log(' App running on port', process.env.PORT || 5000)
-    await init()
+app.listen(5000, ()=>{
+    console.log("App running in port 5000, so enjoy it!!");
 });
-
-
